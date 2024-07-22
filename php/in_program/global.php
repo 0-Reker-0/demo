@@ -4,7 +4,7 @@ class _global
     /**
      * @err массив ошибок
      */
-    public static array $err;
+    public static array $err = [];
     /**
      * @_exit функция выхода
      * 

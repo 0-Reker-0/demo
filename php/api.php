@@ -6,7 +6,7 @@ include './in_program/autoloader.php';
 test_haedrs::init($_SERVER) == true ? 
 _global::_exit(json_encode([
     'acces' => 'denay', 
-    'err' => 'not server rule'
+    'error' => 'not server rule'
 ])):
 
 /*запуск API*/
@@ -41,17 +41,52 @@ function init($data):void
             else
                 _global::_exit(json_encode([
                     'acces' => 'denay', 
-                    'err' => end(_global::$err)
+                    'error' => end(_global::$err)
                 ]));
         
         case 'upd':
-            
+            /*массив введённых данных*/
+            $input = array(
+                'data' => $data['data'],
+                'value' => $data['val']
+            );
+            /*обновление пользователя*/
+            new Update_user($input);
+
+            /*проверки на наличие ошибок*/
+            if(empty(_global::$err))
+                exit(json_encode(['acces' => 'granted']));
+            else
+                _global::_exit(json_encode([
+                    'acces' => 'denay', 
+                    'error' => end(_global::$err)
+                ]));
 
         case 'dell':
+            /*удаление пользователя*/
+            new Delite_user();
 
+            /*проверки на наличие ошибок*/
+            if(empty(_global::$err))
+                exit(json_encode(['acces' => 'granted']));
+            else
+                _global::_exit(json_encode([
+                    'acces' => 'denay', 
+                    'error' => end(_global::$err)
+                ]));
 
         case 'show':
+            /*получение информации пользователя*/
+            Auth::show();
             
+            /*проверки на наличие ошибок*/
+            if(empty(_global::$err))
+                exit(json_encode(['acces' => 'granted', 'data' => _user_info::$info]));
+            else
+                _global::_exit(json_encode([
+                    'acces' => 'denay', 
+                    'error' => end(_global::$err)
+                ]));
 
         case 'auth':
             /*массив введённых данных*/
@@ -69,10 +104,13 @@ function init($data):void
             else
                 _global::_exit(json_encode([
                     'acces' => 'denay', 
-                    'err' => end(_global::$err)
+                    'error' => end(_global::$err)
                 ]));
 
         default:
-            exit('403');
+        _global::_exit(json_encode([
+            'acces' => 'denay', 
+            'error' => 'Code error'
+        ]));
     }
 }

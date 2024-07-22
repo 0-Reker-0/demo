@@ -2,31 +2,31 @@
 /**
  * Класс авторизации пользователя
  * 
- * Использует SQL заготовки
+ * Использует SQL заготовки и трейты готовых функций
  */
 class Auth
 {
     use select;
+    use auth_name;
+    use auth_id;
+
+    /**
+     * __construct запускает обычную авторизацию
+     * @param array $data
+     */
     public function __construct(array $data)
     {
-        $init = db_conn::$pdo->prepare(self::$by_name);
-        $init -> bindParam(1, $data['name']);
-        $init -> execute();
-        if(!$init){
-            array_push(_global::$err, (db_conn::$pdo->errorInfo()));
-            return;
-        }
-        $res = $init->fetchAll();
-        if(hasher::test($data['pass'], $res[0]['pass']) == false){
-            array_push(_global::$err, ('Пароль неверный!'));
-            return;
-        }
-        else{
-            array_push(_user_info::$info, $res[0]['d1']);
-            array_push(_user_info::$info, $res[0]['d2']);
-            array_push(_user_info::$info, $res[0]['d3']);
-            $_SESSION['uid'] = $res[0]['id'];
-        }
+        self::auth_by_name(self::$by_name, $data);
+    }
+
+    /**
+     * show() запускает получение информации о пользователе
+     * @return void
+     */
+    public static function show():void
+    {
+        self::auth_by_id(self::$by_id);
+        return;
     }
 }
 
